@@ -8,4 +8,6 @@ router = routers.DefaultRouter()
 router.register(r'v1/posts', PostViewSet)
 urlpatterns = [
     path('', include(router.urls)),
+    path('v1/auth/', include('djoser.urls')),
+    path('v1/auth/', include('djoser.urls.jwt')),
 ]
