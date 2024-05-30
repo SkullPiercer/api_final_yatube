@@ -1,13 +1,13 @@
-from django.urls import path
-from .views import PostViewSet
+from .views import PostViewSet, CommentViewSet
 from django.urls import include, path
 from rest_framework import routers
 
 
-router = routers.DefaultRouter()
-router.register(r'v1/posts', PostViewSet)
+v1_router = routers.DefaultRouter()
+v1_router.register(r'v1/posts', PostViewSet)
+v1_router.register(r'v1/posts/(?P<post_id>\d+)/comments', CommentViewSet)
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', include(v1_router.urls)),
     path('v1/auth/', include('djoser.urls')),
     path('v1/auth/', include('djoser.urls.jwt')),
 ]
