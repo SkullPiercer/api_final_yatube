@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.relations import SlugRelatedField
 
-from posts.models import Comment, Group, Follow, Post
+from posts.models import Comment, Follow, Group, Post
 
 User = get_user_model()
 
@@ -35,6 +36,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
     following = serializers.SlugRelatedField(
         slug_field='username',
         queryset=User.objects.all()
@@ -42,16 +44,15 @@ class FollowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Follow
-        fields = ('following',)
-        read_only_fields = ('user',)
+        fields = ('user', 'following')
 
     def validate(self, data):
-        if self.context['request'].user == data['following']:
-            raise serializers.ValidationError("You cannot follow yourself.")
-        return data
+        user = self.context['request'].user
+        following_user = data['following']
 
-    def create(self, validated_data):
-        following = validated_data.get('following')
-        follow_instance = Follow.objects.create(user=self.context['request'].user, following=following)
-        serialized_data = self.context['request'].user.username
-        return serialized_data
+        if Follow.objects.filter(user=user, following=following_user).exists():
+            raise ValidationError("You are already following this user.")
+
+        if user == following_user:
+            raise ValidationError("You cannot follow yourself.")
+        return data
