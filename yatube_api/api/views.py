@@ -7,7 +7,12 @@ from rest_framework.permissions import IsAuthenticated
 from posts.models import Comment, Group, Follow, Post
 from .mixins import CreateAuthorMixin
 from .permissions import AuthorOrReadOnly, ReadOnly
-from .serializers import CommentSerializer, GroupSerializer, FollowSerializer, PostSerializer
+from .serializers import (
+    CommentSerializer,
+    GroupSerializer,
+    FollowSerializer,
+    PostSerializer
+)
 
 
 def get_post(post_id):
