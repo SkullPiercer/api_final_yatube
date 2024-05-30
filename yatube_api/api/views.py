@@ -13,7 +13,8 @@ from .serializers import (
     FollowSerializer,
     PostSerializer
 )
-
+from rest_framework import status
+from rest_framework.response import Response
 
 def get_post(post_id):
     return get_object_or_404(Post, id=post_id)
@@ -44,6 +45,9 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = (ReadOnly,)
+
+    def create(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class FollowViewSet(CreateAuthorMixin, viewsets.ModelViewSet):

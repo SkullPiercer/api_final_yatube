@@ -9,6 +9,8 @@ User = get_user_model()
 
 class PostSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
+    group = serializers.PrimaryKeyRelatedField(
+        queryset=Group.objects.all(), required=False)
 
     class Meta:
         fields = '__all__'
@@ -40,10 +42,16 @@ class FollowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Follow
-        fields = ('user', 'following')
+        fields = ('following',)
         read_only_fields = ('user',)
 
     def validate(self, data):
         if self.context['request'].user == data['following']:
             raise serializers.ValidationError("You cannot follow yourself.")
         return data
+
+    def create(self, validated_data):
+        following = validated_data.get('following')
+        follow_instance = Follow.objects.create(user=self.context['request'].user, following=following)
+        serialized_data = self.context['request'].user.username
+        return serialized_data
