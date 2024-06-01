@@ -5,9 +5,9 @@ from rest_framework.filters import SearchFilter
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
+from rest_framework.permissions import AllowAny
 from posts.models import Comment, Follow, Group, Post
-from .permissions import AuthorOrReadOnly, ReadOnly
+from .permissions import AuthorOrReadOnly
 from .serializers import (
     CommentSerializer,
     GroupSerializer,
@@ -44,13 +44,10 @@ class CommentViewSet(viewsets.ModelViewSet):
         return post.comments.all()
 
 
-class GroupViewSet(viewsets.ModelViewSet):
+class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = (ReadOnly,)
-
-    def create(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    permission_classes = (AllowAny,)
 
 
 class FollowViewSet(viewsets.ModelViewSet):
