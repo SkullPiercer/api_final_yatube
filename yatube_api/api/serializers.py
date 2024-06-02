@@ -49,13 +49,18 @@ class FollowSerializer(serializers.ModelSerializer):
         validators = [
             UniqueTogetherValidator(
                 queryset=Follow.objects.all(),
-                fields=('user', 'following'),
+                fields=('user', 'following',),
                 message='You are already following this user.'
             )
         ]
 
+    def to_internal_value(self, data):
+        data = super().to_internal_value(data)
+        data['user'] = self.context['request'].user
+        return data
+
     def validate(self, data):
-        user = self.context['request'].user
+        user = data['user']
         following_user = data['following']
 
         if user == following_user:
