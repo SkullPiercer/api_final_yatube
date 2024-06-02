@@ -1,10 +1,10 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, mixins, permissions, viewsets
+from rest_framework import mixins, permissions, viewsets
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from posts.models import Comment, Follow, Group, Post
+from posts.models import Comment, Group, Post
 from .permissions import Author
 from .serializers import (
     CommentSerializer,
